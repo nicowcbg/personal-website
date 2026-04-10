@@ -141,12 +141,12 @@ function App() {
         </Reveal>
         <Reveal delay={160}>
           <p className="thesis-detail">
-            I&apos;ve spent years researching trust in automated systems through work in HCI: how humans delegate, when they let go of control, and what makes automation feel legitimate. Today, I&apos;m building autonomous agents that people can trust.
+            I&apos;ve spent years doing research in HCI around trust in automated systems: how humans delegate, when they let go of control, and what makes automation feel legitimate. Today, I&apos;m building autonomous agents that people can trust.
           </p>
         </Reveal>
         <Reveal delay={240}>
           <p className="thesis-detail">
-            AI systems now have extraordinary technical capability. They can use tools, call APIs, and complete increasingly complex tasks. But capability without context is not intelligence. Without a model of how someone thinks, how they work, and how their organization operates, an agent is simply executing instructions in the dark. That is why today&apos;s interaction model remains so fragile: prompt, correct, prompt again. It works until it doesn&apos;t, and when it fails, the flaw is structural.
+            AI systems now have extraordinary technical capability. They can use tools, call APIs, and complete increasingly complex tasks. But context without understanding is not intelligence. Without a model of how someone thinks, how they work, and how their organization operates, an agent is simply executing instructions in the dark. That is why today&apos;s interaction model remains so fragile: prompt, correct, prompt again. It works until it doesn&apos;t, and when it fails, the flaw is structural.
           </p>
         </Reveal>
         <Reveal delay={320}>
