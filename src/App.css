@@ -286,6 +286,16 @@
   color: var(--text);
 }
 
+.venture-card--static {
+  cursor: default;
+}
+
+.venture-card--static:hover {
+  border-color: var(--border);
+  box-shadow: none;
+  transform: none;
+}
+
 /* ─── BACKGROUND ─── */
 .bg-grid {
   display: grid;

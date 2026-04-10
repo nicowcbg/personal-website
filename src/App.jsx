@@ -77,7 +77,7 @@ const VENTURES = [
     logo: slidlyLogo,
     role: 'Side project · 2023 – Present',
     desc: 'Type one sentence, get a pitch deck. That simple.',
-    url: 'https://slidly.ai',
+    url: null,
     badge: 'side',
     badgeLabel: 'Side project',
   },
@@ -164,27 +164,45 @@ function App() {
         <div className="ventures-grid">
           {VENTURES.map((v, i) => (
             <Reveal key={v.name} delay={i * 80}>
-              <a
-                href={v.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="venture-card"
-              >
-                <div className="venture-main">
-                  <div className="venture-header">
-                    <img src={v.logo} alt={v.name} className="venture-logo" />
-                    <div>
-                      <div className="venture-name">{v.name}</div>
-                      <div className="venture-role">{v.role}</div>
+              {v.url ? (
+                <a
+                  href={v.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="venture-card"
+                >
+                  <div className="venture-main">
+                    <div className="venture-header">
+                      <img src={v.logo} alt={v.name} className="venture-logo" />
+                      <div>
+                        <div className="venture-name">{v.name}</div>
+                        <div className="venture-role">{v.role}</div>
+                      </div>
                     </div>
+                    <div className="venture-desc">{v.desc}</div>
                   </div>
-                  <div className="venture-desc">{v.desc}</div>
+                  <div className="venture-meta">
+                    <span className={`venture-badge ${v.badge}`}>{v.badgeLabel}</span>
+                    <span className="venture-arrow">&#8599;</span>
+                  </div>
+                </a>
+              ) : (
+                <div className="venture-card venture-card--static">
+                  <div className="venture-main">
+                    <div className="venture-header">
+                      <img src={v.logo} alt={v.name} className="venture-logo" />
+                      <div>
+                        <div className="venture-name">{v.name}</div>
+                        <div className="venture-role">{v.role}</div>
+                      </div>
+                    </div>
+                    <div className="venture-desc">{v.desc}</div>
+                  </div>
+                  <div className="venture-meta">
+                    <span className={`venture-badge ${v.badge}`}>{v.badgeLabel}</span>
+                  </div>
                 </div>
-                <div className="venture-meta">
-                  <span className={`venture-badge ${v.badge}`}>{v.badgeLabel}</span>
-                  <span className="venture-arrow">&#8599;</span>
-                </div>
-              </a>
+              )}
             </Reveal>
           ))}
         </div>
