@@ -3,6 +3,7 @@ import './App.css'
 import lobbyLogo from './assets/LobbyLogo.png'
 import mooneLogo from './assets/Moone_logo.png'
 import slidlyLogo from './assets/slidly_logo.png'
+import hypnobuildLogo from './assets/hypnobuild_logo.svg'
 
 /* ─────────────────────────────────────────────────────────
  * ANIMATION STORYBOARD — CSS-driven, intersection-observed
@@ -78,6 +79,15 @@ const VENTURES = [
     role: 'Side project · 2023 – Present',
     desc: 'Type one sentence, get a pitch deck. That simple.',
     url: null,
+    badge: 'side',
+    badgeLabel: 'Side project',
+  },
+  {
+    name: 'Hypnobuild',
+    logo: hypnobuildLogo,
+    role: 'Side project · 2025 – Present',
+    desc: 'A mobile coding agent that builds and ships full-stack apps from your phone — no laptop needed.',
+    url: 'https://hypnobuild.com',
     badge: 'side',
     badgeLabel: 'Side project',
   },
