@@ -56,6 +56,15 @@ function Reveal({ children, className = '', delay = 0, as: Tag = 'div' }) {
 
 const VENTURES = [
   {
+    name: 'Hypnobuild',
+    logo: hypnobuildLogo,
+    role: 'Side project · 2025 – Present',
+    desc: 'A mobile coding agent that builds and ships full-stack apps from your phone — no laptop needed.',
+    url: 'https://hypnobuild.com',
+    badge: 'side',
+    badgeLabel: 'Side project',
+  },
+  {
     name: 'Lobby',
     logo: lobbyLogo,
     role: 'Co-founder & CTO · 2023 – Present',
@@ -79,15 +88,6 @@ const VENTURES = [
     role: 'Side project · 2023 – Present',
     desc: 'Type one sentence, get a pitch deck. That simple.',
     url: null,
-    badge: 'side',
-    badgeLabel: 'Side project',
-  },
-  {
-    name: 'Hypnobuild',
-    logo: hypnobuildLogo,
-    role: 'Side project · 2025 – Present',
-    desc: 'A mobile coding agent that builds and ships full-stack apps from your phone — no laptop needed.',
-    url: 'https://hypnobuild.com',
     badge: 'side',
     badgeLabel: 'Side project',
   },
