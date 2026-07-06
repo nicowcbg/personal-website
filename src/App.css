@@ -25,7 +25,7 @@
 }
 
 .nav-name {
-  font-family: var(--serif);
+  font-family: var(--sans);
   font-size: 18px;
   color: var(--black);
   text-decoration: none;
@@ -92,7 +92,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  font-family: var(--serif);
+  font-family: var(--sans);
   font-size: 36px;
 }
 
@@ -110,7 +110,7 @@
 }
 
 .hero h1 {
-  font-family: var(--serif);
+  font-family: var(--sans);
   font-size: clamp(32px, 9vw, 56px);
   font-weight: 400;
   color: var(--black);
@@ -153,7 +153,7 @@
 
 /* ─── THESIS ─── */
 .thesis-text {
-  font-family: var(--serif);
+  font-family: var(--sans);
   font-size: clamp(24px, 3.5vw, 32px);
   line-height: 1.45;
   color: var(--black);
@@ -220,7 +220,7 @@
 }
 
 .venture-name {
-  font-family: var(--serif);
+  font-family: var(--sans);
   font-size: 22px;
   color: var(--black);
   line-height: 1.2;
@@ -348,7 +348,7 @@
 }
 
 .bg-card.featured .featured-title {
-  font-family: var(--serif);
+  font-family: var(--sans);
   font-size: 20px;
   color: var(--white);
   line-height: 1.35;
@@ -458,7 +458,7 @@
 }
 
 .footer-cta {
-  font-family: var(--serif);
+  font-family: var(--sans);
   font-size: clamp(28px, 4vw, 40px);
   color: var(--black);
   line-height: 1.2;
