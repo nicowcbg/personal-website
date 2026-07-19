@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Instrument+Serif:ital@0;1&family=Inter:ital,opsz,wght@0,14..32,300;0,14..32,400;0,14..32,500;1,14..32,300&display=swap');
 
 *, *::before, *::after {
   box-sizing: border-box;
@@ -7,22 +7,23 @@
 }
 
 :root {
-  --black:   #0D0D0C;
-  --ink:     #1A1917;
-  --text:    #2C2A27;
-  --muted:   #767472;
-  --sub:     #B0ADAA;
-  --border:  #ECEAE7;
-  --surface: #F5F4F1;
-  --page:    #FAFAF8;
-  --white:   #FFFFFF;
+  --page:    #000000;
+  --ink:     #F5F5F4;
+  --text:    rgba(255, 255, 255, 0.82);
+  --muted:   rgba(255, 255, 255, 0.55);
+  --sub:     rgba(255, 255, 255, 0.35);
+  --border:  rgba(255, 255, 255, 0.14);
+  --accent:  #E8B06B;
 
   --serif: 'Instrument Serif', Georgia, serif;
   --sans:  'Inter', system-ui, -apple-system, sans-serif;
+  --mono:  'IBM Plex Mono', 'SF Mono', Menlo, monospace;
 }
 
 html {
-  scroll-behavior: smooth;
+  scroll-behavior: auto;
+  overflow-x: clip;
+  background: var(--page);
 }
 
 body {
@@ -33,7 +34,7 @@ body {
   line-height: 1.7;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  padding-bottom: env(safe-area-inset-bottom, 0px);
+  overflow-x: clip;
 }
 
 ::selection {
@@ -50,4 +51,10 @@ a {
 
 a:hover {
   text-decoration-color: var(--text);
+}
+
+:focus-visible {
+  outline: 1px solid var(--ink);
+  outline-offset: 3px;
+  border-radius: 2px;
 }
