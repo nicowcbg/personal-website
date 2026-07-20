@@ -22,19 +22,22 @@ const VERT = /* glsl */ `
   attribute float aSize;
   attribute float aPhase;
   attribute vec3 aColor;
+  attribute float aFire;
   uniform float uTime;
   uniform float uPixelRatio;
   uniform float uTurb;
   varying float vTwinkle;
   varying vec3 vColor;
+  varying float vFire;
   void main() {
     vTwinkle = 0.65 + 0.35 * sin(uTime * 0.9 + aPhase * 6.2831);
     vColor = aColor;
+    vFire = aFire;
     vec3 pos = position;
     pos.x += sin(position.y * 2.1 + uTime * 0.5 + aPhase * 3.0) * uTurb;
     pos.y += sin(position.z * 1.7 + uTime * 0.4 + aPhase * 5.0) * uTurb;
     vec4 mv = modelViewMatrix * vec4(pos, 1.0);
-    float px = aSize * uPixelRatio * (14.0 / -mv.z);
+    float px = aSize * (1.0 + aFire * 0.6) * uPixelRatio * (14.0 / -mv.z);
     gl_PointSize = min(px, 24.0 * uPixelRatio);
     gl_Position = projectionMatrix * mv;
   }
@@ -46,10 +49,11 @@ const FRAG = /* glsl */ `
   uniform float uTwinkle;
   varying float vTwinkle;
   varying vec3 vColor;
+  varying float vFire;
   void main() {
     float d = length(gl_PointCoord - 0.5);
     float disc = smoothstep(0.5, 0.06, d);
-    float a = disc * uAlpha * uBaseAlpha * mix(1.0, vTwinkle, uTwinkle);
+    float a = disc * uAlpha * uBaseAlpha * mix(1.0, vTwinkle, uTwinkle) * (1.0 + vFire * 2.5);
     if (a < 0.01) discard;
     gl_FragColor = vec4(vColor, a);
   }
@@ -97,6 +101,7 @@ function makePoints(positions, { sizes, phases, colors, color = 0xffffff, baseAl
   geo.setAttribute('aSize', new THREE.BufferAttribute(sizes, 1))
   geo.setAttribute('aPhase', new THREE.BufferAttribute(phases, 1))
   geo.setAttribute('aColor', new THREE.BufferAttribute(colors, 3))
+  geo.setAttribute('aFire', new THREE.BufferAttribute(new Float32Array(count), 1))
   const mat = new THREE.ShaderMaterial({
     vertexShader: VERT,
     fragmentShader: FRAG,
@@ -156,7 +161,137 @@ function wireCloud(positions, count, maxDist, maxEdges, mat4, color = 0xffffff) 
   })
   const lines = new THREE.LineSegments(geo, mat)
   if (mat4) lines.applyMatrix4(mat4)
-  return { lines, mat }
+  return { lines, mat, segs: seg }
+}
+
+/* ── electrical activity: firing neurons + lightning arcs ── */
+function makeActivity(count, segs, pointsObj, rateMin, rateMax) {
+  const adj = Array.from({ length: count }, () => [])
+  for (let i = 0; i < segs.length; i += 2) {
+    adj[segs[i]].push(segs[i + 1])
+    adj[segs[i + 1]].push(segs[i])
+  }
+  return {
+    adj,
+    count,
+    attr: pointsObj.geometry.attributes.aFire,
+    timer: Math.random() * 0.5,
+    rateMin,
+    rateMax,
+  }
+}
+
+function updateActivity(a, dt) {
+  const fire = a.attr.array
+  const decay = Math.exp(-3.2 * dt)
+  for (let i = 0; i < fire.length; i++) fire[i] *= decay
+  a.timer -= dt
+  if (a.timer <= 0) {
+    const i = (Math.random() * a.count) | 0
+    fire[i] = 1
+    const nb = a.adj[i]
+    if (nb.length) {
+      const n = nb[(Math.random() * nb.length) | 0]
+      fire[n] = Math.max(fire[n], 0.8)
+    }
+    a.timer = a.rateMin + Math.random() * (a.rateMax - a.rateMin)
+  }
+  a.attr.needsUpdate = true
+}
+
+const BOLT_PTS = 6
+
+function makeBolt(parent, positions, count) {
+  const geo = new THREE.BufferGeometry()
+  geo.setAttribute('position', new THREE.BufferAttribute(new Float32Array(BOLT_PTS * 3), 3))
+  const mat = new THREE.LineBasicMaterial({
+    color: 0xdde4ff,
+    transparent: true,
+    opacity: 0,
+    blending: THREE.AdditiveBlending,
+    depthWrite: false,
+  })
+  const line = new THREE.Line(geo, mat)
+  line.frustumCulled = false
+  parent.add(line)
+  return {
+    mat,
+    positions,
+    count,
+    state: 'idle',
+    timer: 1 + Math.random() * 3,
+    alpha: 0,
+    attr: geo.attributes.position,
+  }
+}
+
+function fireBolt(b) {
+  const arr = b.attr.array
+  const ia = (Math.random() * b.count) | 0
+  const ax = b.positions[ia * 3]
+  const ay = b.positions[ia * 3 + 1]
+  const az = b.positions[ia * 3 + 2]
+  // find a partner at bolt distance
+  let ib = -1
+  for (let tries = 0; tries < 8; tries++) {
+    const j = (Math.random() * b.count) | 0
+    const dx = b.positions[j * 3] - ax
+    const dy = b.positions[j * 3 + 1] - ay
+    const dz = b.positions[j * 3 + 2] - az
+    const d = Math.sqrt(dx * dx + dy * dy + dz * dz)
+    if (d > 0.4 && d < 1.5) {
+      ib = j
+      break
+    }
+  }
+  if (ib < 0) return false
+  const bx = b.positions[ib * 3]
+  const by = b.positions[ib * 3 + 1]
+  const bz = b.positions[ib * 3 + 2]
+  // jagged midpoints with perpendicular jitter
+  const dx = bx - ax
+  const dy = by - ay
+  const dz = bz - az
+  const len = Math.sqrt(dx * dx + dy * dy + dz * dz)
+  // arbitrary perpendicular
+  let px = -dy
+  let py = dx
+  let pz = dz * 0.5
+  const pl = Math.sqrt(px * px + py * py + pz * pz) || 1
+  px /= pl
+  py /= pl
+  pz /= pl
+  for (let i = 0; i < BOLT_PTS; i++) {
+    const t = i / (BOLT_PTS - 1)
+    const jag = i === 0 || i === BOLT_PTS - 1 ? 0 : (Math.random() - 0.5) * len * 0.28
+    arr[i * 3] = ax + dx * t + px * jag
+    arr[i * 3 + 1] = ay + dy * t + py * jag
+    arr[i * 3 + 2] = az + dz * t + pz * jag
+  }
+  b.attr.needsUpdate = true
+  return true
+}
+
+function updateBolt(b, dt, vis) {
+  if (b.state === 'idle') {
+    b.timer -= dt
+    if (b.timer <= 0) {
+      if (fireBolt(b)) {
+        b.state = 'firing'
+        b.alpha = 1
+      } else {
+        b.timer = 0.5
+      }
+    }
+  } else {
+    b.alpha *= Math.exp(-9 * dt)
+    if (b.alpha < 0.02) {
+      b.alpha = 0
+      b.state = 'idle'
+      b.timer = 1.5 + Math.random() * 3.5
+    }
+  }
+  b.mat.opacity = b.alpha * vis
 }
 
 function makeGlowTexture() {
@@ -273,6 +408,13 @@ export function createJourneyScene(canvas, { nodeTs = [0.16, 0.39, 0.62, 0.81, 0
   stormWires.mat.opacity = 0.14
   stormGroup.add(stormWires.lines)
 
+  // the storm is alive: neurons fire + propagate, bolts arc through it
+  const stormActivity = makeActivity(STORM_N, stormWires.segs, storm.points, 0.12, 0.6)
+  const stormBolts = [
+    makeBolt(stormGroup, stormCloud.positions, STORM_N),
+    makeBolt(stormGroup, stormCloud.positions, STORM_N),
+  ]
+
   /* ── THE SYNAPSE PATH ── */
   const curve = new THREE.CatmullRomCurve3([
     new THREE.Vector3(0, 0, 2),
@@ -327,6 +469,8 @@ export function createJourneyScene(canvas, { nodeTs = [0.16, 0.39, 0.62, 0.81, 0
   // neuron clusters at each node (one per project + outro)
   const UP = new THREE.Vector3(0, 1, 0)
   const clusters = []
+  const clusterActivities = []
+  const clusterBolts = []
   for (let ni = 0; ni < nodeTs.length; ni++) {
     const t = nodeTs[ni]
     const center = curve.getPointAt(t)
@@ -397,6 +541,10 @@ export function createJourneyScene(canvas, { nodeTs = [0.16, 0.39, 0.62, 0.81, 0
 
     pathGroup.add(group)
     clusters.push(group)
+    clusterActivities.push(makeActivity(N, wires.segs, node.points, 0.3, 1.1))
+    const bolt = makeBolt(group, cloud.positions, N)
+    bolt.timer = 2 + ni * 1.5 + Math.random() * 4 // staggered, so they never sync
+    clusterBolts.push(bolt)
   }
 
   // ambient mini-clusters: a continuous forest along the tunnel so the
@@ -510,20 +658,22 @@ export function createJourneyScene(canvas, { nodeTs = [0.16, 0.39, 0.62, 0.81, 0
 
     if (p < PHASE_APPROACH) {
       const k = easeInOut(p / PHASE_APPROACH)
-      camera.position.set(0, 0.15, lerp(14, 3.9, k))
+      camera.position.set(0, lerp(0.15, 0.12, k), lerp(14, 3.9, k))
       lookTarget.set(0, -0.9, 0) // orb rides high, headline below
     } else if (p < PHASE_CROSS) {
       const k = easeInOut((p - PHASE_APPROACH) / (PHASE_CROSS - PHASE_APPROACH))
       camera.position.set(0, 0.12, lerp(3.9, 0.6, k))
-      lookTarget.set(0, 0, 0) // head-on through the shell
+      lookTarget.set(0, lerp(-0.9, 0, k), 0) // recenter smoothly while penetrating
       // the glass dissolves into fog before we touch it — the haze
       // overlay carries the membrane moment, not the rim
       glassAlpha = Math.max(0, 1 - k * 1.3)
     } else if (p < PHASE_DEPLOY) {
       const k = (p - PHASE_CROSS) / (PHASE_DEPLOY - PHASE_CROSS)
       deploy = easeInOut(k)
-      camera.position.set(0, 0.15, lerp(0.6, 2.4, k))
-      lookTarget.copy(curve.getPointAt(0.04))
+      camera.position.set(0, lerp(0.12, 0.15, k), lerp(0.6, 2.4, k))
+      // hand the gaze off to the path ahead without snapping
+      const ahead = curve.getPointAt(0.04)
+      lookTarget.set(lerp(0, ahead.x, k), lerp(0, ahead.y, k), lerp(0, ahead.z, k))
       glassAlpha = 0
     } else {
       const ku = clamp01((p - PHASE_DEPLOY) / (1 - PHASE_DEPLOY))
@@ -568,6 +718,14 @@ export function createJourneyScene(canvas, { nodeTs = [0.16, 0.39, 0.62, 0.81, 0
     // twinkle + turbulence carry the idle motion)
     dust.mat.uniforms.uTime.value = t
     pulses.mat.uniforms.uTime.value = t
+
+    // electrical activity: firing neurons everywhere, bolts arcing
+    updateActivity(stormActivity, dt)
+    for (const b of stormBolts) updateBolt(b, dt, stormAlpha)
+    for (let i = 0; i < clusterActivities.length; i++) {
+      updateActivity(clusterActivities[i], dt)
+      updateBolt(clusterBolts[i], dt, pathVis)
+    }
 
     // pulses ride the axon
     for (let i = 0; i < pulseState.length; i++) {

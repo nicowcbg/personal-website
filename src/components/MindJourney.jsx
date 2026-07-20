@@ -76,6 +76,7 @@ export default function MindJourney() {
   const indexRef = useRef(null)
   const contactRef = useRef(null)
   const projRefs = useRef([])
+  const btnRefs = useRef([])
 
   useEffect(() => {
     const scene = createJourneyScene(canvasRef.current, { nodeTs: NODE_TS })
@@ -137,7 +138,10 @@ export default function MindJourney() {
 
       // projects
       for (let i = 0; i < PROJECTS.length; i++) {
-        setOv(projRefs.current[i], winOpacity(sm, PROJECTS[i].win), !!PROJECTS[i].url)
+        const o = winOpacity(sm, PROJECTS[i].win)
+        setOv(projRefs.current[i], o, false)
+        const btn = btnRefs.current[i]
+        if (btn) btn.style.pointerEvents = o > 0.45 ? 'auto' : 'none'
       }
 
       // contact outro
@@ -208,40 +212,30 @@ export default function MindJourney() {
       </div>
 
       {/* projects along the synapse */}
-      {PROJECTS.map((p, i) => {
-        const inner = (
-          <>
-            <img className="proj-logo" src={p.logo} alt="" />
-            <div>
-              <p className="proj-name">{p.name}</p>
-              <p className="proj-line">{p.line}</p>
+      {PROJECTS.map((p, i) => (
+        <div className="ov ov-proj-pos" key={p.id}>
+          <div className="proj" style={{ opacity: 0 }} ref={(el) => (projRefs.current[i] = el)}>
+            <div className="proj-head">
+              <img className="proj-logo" src={p.logo} alt="" />
+              <div className="proj-text">
+                <p className="proj-name">{p.name}</p>
+                <p className="proj-line">{p.line}</p>
+              </div>
               {p.url && (
-                <span className="proj-btn">{p.url.replace('https://', '')} &#8599;</span>
+                <a
+                  className="proj-btn"
+                  href={p.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  ref={(el) => (btnRefs.current[i] = el)}
+                >
+                  Explore <span className="proj-arrow">&#8599;</span>
+                </a>
               )}
             </div>
-          </>
-        )
-        return (
-          <div className="ov ov-proj-pos" key={p.id}>
-            {p.url ? (
-              <a
-                className="proj"
-                href={p.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                style={{ opacity: 0 }}
-                ref={(el) => (projRefs.current[i] = el)}
-              >
-                {inner}
-              </a>
-            ) : (
-              <div className="proj" style={{ opacity: 0 }} ref={(el) => (projRefs.current[i] = el)}>
-                {inner}
-              </div>
-            )}
           </div>
-        )
-      })}
+        </div>
+      ))}
 
       {/* contact outro */}
       <div className="ov ov-contact-pos">
@@ -252,6 +246,12 @@ export default function MindJourney() {
             <a href="mailto:cabri.nico@gmail.com">cabri.nico@gmail.com</a>
             <a href="https://twitter.com/nicowcbg" target="_blank" rel="noopener noreferrer">@nicowcbg</a>
             <a href="https://www.linkedin.com/in/nicolas-cabrignac/" target="_blank" rel="noopener noreferrer">LinkedIn</a>
+          </div>
+          <div className="contact-projects">
+            <img src={lobbyLogo} alt="Lobby" />
+            <img src={hypnoIcon} alt="Hypnobuild" />
+            <img src={mooneLogo} alt="Moone" />
+            <img src={slidlyLogo} alt="Slidly AI" />
           </div>
         </div>
       </div>

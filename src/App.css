@@ -212,68 +212,90 @@
 }
 
 .proj {
-  display: flex;
-  align-items: center;
-  gap: 18px;
-  max-width: 320px;
+  display: block;
+  width: 380px;
+  padding: 15px 18px;
   text-decoration: none;
   color: var(--text);
+  background: rgba(255, 255, 255, 0.035);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  transition: border-color 0.25s, background 0.25s, transform 0.25s, box-shadow 0.25s;
+}
+
+.proj-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+  align-self: center;
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--muted);
+  text-decoration: none;
+  cursor: pointer;
+  border: 1px solid var(--border);
+  border-radius: 100px;
+  padding: 7px 14px;
+  transition: color 0.2s, border-color 0.2s, box-shadow 0.2s;
+}
+
+.proj-arrow {
+  transition: transform 0.2s, color 0.2s;
+}
+
+.proj-btn:hover {
+  color: var(--ink);
+  border-color: rgba(255, 255, 255, 0.45);
+  box-shadow: 0 0 16px rgba(255, 255, 255, 0.12);
+}
+
+.proj-btn:hover .proj-arrow {
+  transform: translate(2px, -2px);
+}
+
+.proj-head {
+  display: flex;
+  align-items: center;
+  gap: 14px;
 }
 
 .proj-logo {
-  width: 44px;
-  height: 44px;
-  border-radius: 12px;
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
   object-fit: contain;
-  background: rgba(255, 255, 255, 0.06);
+  background: rgba(255, 255, 255, 0.08);
   border: 1px solid var(--border);
-  padding: 6px;
+  padding: 5px;
   filter: grayscale(1);
   flex-shrink: 0;
+}
+
+.proj-text {
+  flex: 1;
+  min-width: 0;
 }
 
 .proj-name {
   font-size: 19px;
   font-weight: 400;
   color: var(--ink);
-  letter-spacing: -0.01em;
+  letter-spacing: -0.015em;
   line-height: 1.2;
   margin-bottom: 3px;
 }
 
 .proj-line {
   font-family: var(--mono);
-  font-size: 11px;
+  font-size: 10.5px;
   line-height: 1.5;
   color: var(--muted);
   letter-spacing: 0.02em;
-}
-
-.proj-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
-  margin-top: 12px;
-  font-family: var(--mono);
-  font-size: 10px;
-  letter-spacing: 0.06em;
-  color: var(--muted);
-  border: 1px solid var(--border);
-  border-radius: 100px;
-  padding: 5px 12px;
-  transition: color 0.2s, border-color 0.2s, box-shadow 0.2s;
-}
-
-a.proj:hover .proj-btn {
-  color: var(--ink);
-  border-color: var(--ink);
-  box-shadow: 0 0 18px rgba(255, 255, 255, 0.12);
-}
-
-a.proj:hover .proj-name {
-  text-decoration: underline;
-  text-decoration-color: var(--sub);
-  text-underline-offset: 4px;
 }
 
 /* contact outro */
@@ -284,7 +306,34 @@ a.proj:hover .proj-name {
 }
 
 .contact {
+  position: relative;
   text-align: center;
+}
+
+/* ─── OUTRO project icons ─── */
+.contact-projects {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  margin-top: 30px;
+}
+
+.contact-projects img {
+  width: 34px;
+  height: 34px;
+  border-radius: 9px;
+  object-fit: contain;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--border);
+  padding: 5px;
+  filter: grayscale(1);
+  transition: filter 0.25s, border-color 0.25s, transform 0.25s;
+}
+
+.contact-projects img:hover {
+  filter: grayscale(0);
+  border-color: rgba(255, 255, 255, 0.3);
+  transform: translateY(-2px);
 }
 
 .contact-name {
@@ -356,7 +405,13 @@ a.proj:hover .proj-name {
   }
 
   .proj {
-    max-width: none;
+    min-width: 0;
+    width: 100%;
+  }
+
+  .proj-btn {
+    padding: 11px 18px;
+    font-size: 11px;
   }
 
   .journey-index {
