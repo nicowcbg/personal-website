@@ -64,10 +64,10 @@
   opacity: 0.16;
 }
 
-.fm-tl { top: 18px; left: 18px; border-top: 1px solid #fff; border-left: 1px solid #fff; }
-.fm-tr { top: 18px; right: 18px; border-top: 1px solid #fff; border-right: 1px solid #fff; }
-.fm-bl { bottom: 18px; left: 18px; border-bottom: 1px solid #fff; border-left: 1px solid #fff; }
-.fm-br { bottom: 18px; right: 18px; border-bottom: 1px solid #fff; border-right: 1px solid #fff; }
+.fm-tl { top: 18px; left: 18px; border-top: 1px solid #fff; border-left: 1px solid #fff; border-top-left-radius: 5px; }
+.fm-tr { top: 18px; right: 18px; border-top: 1px solid #fff; border-right: 1px solid #fff; border-top-right-radius: 5px; }
+.fm-bl { bottom: 18px; left: 18px; border-bottom: 1px solid #fff; border-left: 1px solid #fff; border-bottom-left-radius: 5px; }
+.fm-br { bottom: 18px; right: 18px; border-bottom: 1px solid #fff; border-right: 1px solid #fff; border-bottom-right-radius: 5px; }
 
 /* Fog haze while crossing the glass — tinted like the membrane */
 .haze {
